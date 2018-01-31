@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luohao.dao.UserDao">
+
+	<resultMap type="User" id="UserResult">
+		<result property="id" column="id_" />
+		<result property="firstName" column="first_" />
+		<result property="lastName" column="last_" />
+		<result property="email" column="email_" />
+		<result property="password" column="pwd_" />
+	</resultMap>
+
+	<select id="queryUserMsg" resultMap="UserResult">
+		SELECT * FROM ACT_ID_USER T
+		<where>
+			<if test="firstName!=null and firstName!='' ">
+				T.FIRST_ LIKE CONCAT('%',#{firstName},'%');
+			</if>
+		</where>
+		<if test=" pageIndex!=null and pageSize!=null ">
+			limit #{pageIndex},#{pageSize}
+		</if>
+	</select>
+	
+	<select id="queryUserMsgCount" resultType="Integer">
+		SELECT count(*) FROM ACT_ID_USER T
+		<where>
+			<if test="firstName!=null and firstName!='' ">
+				T.FIRST_ LIKE CONCAT('%',#{firstName},'%');
+			</if>
+		</where>
+	</select>
+
+	<select id="login" parameterType="Map" resultType="String">
+		SELECT
+		COUNT(1) AS DT_ROW FROM ACT_ID_USER T WHERE T.id_ = #{id} and
+		T.pwd_ =
+		#{password}
+	</select>
+
+	<select id="queryUserById" parameterType="Map" resultMap="UserResult">
+		SELECT
+		* FROM ACT_ID_USER T WHERE T.id_ = #{id}
+	</select>
+
+	<insert id="addUser" parameterType="Map" >
+		INSERT INTO
+		ACT_ID_USER(ID_,FIRST_,EMAIL_,PWD_)
+		VALUES
+		(#{id},#{firstName},#{email},#{password});
+	</insert>
+
+	<update id="updateUser" parameterType="Map" >
+		UPDATE
+		ACT_ID_USER 
+		<set>
+			<if test="firstName!=null and firstName!='' ">
+				FIRST_ = #{firstName},
+			</if>
+			<if test="email!=null and email!='' ">
+				EMAIL_ = #{email},
+			</if>
+			<if test="password!=null and password!='' ">
+				PWD_ = #{password},
+			</if>
+		</set>
+		WHERE ID_ = #{id};
+	</update>
+	
+	<delete id="delUser" parameterType="Map" >
+		DELETE FROM ACT_ID_USER WHERE ID_ = #{id};
+	</delete>
+
+</mapper>
